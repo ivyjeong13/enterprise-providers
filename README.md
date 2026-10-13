@@ -24,17 +24,19 @@ and `linux/arm64`, without running target binaries during the build.
 
 ## Provider display text
 
-Provider YAML keeps English in `name`, `description`, and each configuration
-parameter's `friendlyName` and `description`. Add `locales` beside those
-fields for `ja`, `ko`, and `zh-CN`:
+Provider YAML references backend catalog messages in `name`, `description`, and
+configuration parameters' `friendlyName` and `description`:
 
 ```yaml
-locales:
-  ja:
-    name: "表示名"
-    description: "説明"
+name: "${google_auth_provider_name}"
+description: "${google_auth_provider_description}"
 ```
 
-For a configuration parameter, use `friendlyName` and `description` under each
-locale instead of `name` and `description`. Obot selects the display text from
-`Accept-Language` and uses the English field when a translation is absent.
+Messages live in Obot's `pkg/i18n/messages/auth-providers/{locale}.json` or
+`pkg/i18n/messages/model-providers/{locale}.json`. Use the YAML filename with
+hyphens replaced by underscores as the key prefix. Parameter keys append the
+lowercase configuration suffix and `friendly_name` or `description`.
+
+Obot resolves references using `Accept-Language`, falling back to English for
+missing or empty translations. Unknown keys retain their `${key}` reference.
+Literal text remains valid. Ship catalog additions in Obot together with updated provider registry images; catalog changes require rebuilding Obot.
